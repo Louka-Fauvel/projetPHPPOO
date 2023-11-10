@@ -1,19 +1,21 @@
 <?php
 namespace blog\src\models;
 
+use DateTime;
+
 class Posts {
 
-    private $id;
-    private $title;
-    private $content;
-    private $creation_date;
+    private int $id;
+    private string $title;
+    private string $content;
+    private DateTime $creation_date;
 
-    public function __construct($id, $title, $content, $creation_date) {
+    public function __construct(int $id, string $title, string $content, string $creation_date) {
 
         $this->id = $id;
         $this->title = $title;
         $this->content = $content;
-        $this->creation_date = $creation_date;
+        $this->creation_date = date_create($creation_date);
 
     }
 
@@ -38,7 +40,7 @@ class Posts {
     }
 
     public function getCreationDate() {
-        return $this->creation_date;
+        return $this->creation_date->format('d/m/Y H:i');
     }
 
     public function setCreationDate($creation_date): void {

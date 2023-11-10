@@ -8,20 +8,19 @@ class PostsRepo {
 
     public Database $database;
 
-    public function create($tilte, $content) {
+    public function create($tilte, $content): void {
 
-        $statement = $this->database->getDatabase()->prepare("INSERT INTO post(title,content,creation_date) VALUES(?, ?, NOW())");
+        $statement = $this->database->getDatabase()->prepare("INSERT INTO posts(title,content,creation_date) VALUES(?, ?, NOW())");
         $statement->execute([$tilte, $content]);
 
     }
 
     public function getAll(): array {
 
-        $statement = $this->database->getDatabase()->prepare("SELECT id, title, content, DATE_FORMAT(creation_date, '%d/%m/%Y à %Hh%imin%ss') FROM posts ORDER BY creation_date");
+        $statement = $this->database->getDatabase()->prepare("SELECT id, title, content, creation_date FROM posts ORDER BY creation_date");
         $statement->execute();
         $posts = [];
 
-        var_dump($statement->fetch());
         while ($row = $statement->fetch()) {
             $post = new Posts($row['id'], $row['title'], $row['content'], $row['creation_date']);
             $posts[] = $post;
@@ -33,12 +32,26 @@ class PostsRepo {
 
     public function get($id): Posts {
 
-        $statement = $this->database->getDatabase()->prepare("SELECT id, title, content, DATE_FORMAT(creation_date, '%d/%m/%Y à %Hh%imin%ss') FROM posts WHERE id = ?");
-        $statement->execute($id);
+        $statement = $this->database->getDatabase()->prepare("SELECT id, title, content, creation_date FROM posts WHERE id = ?");
+        $statement->execute([$id]);
         $row = $statement->fetch();
         $post = new Posts($row['id'], $row['title'], $row['content'], $row['creation_date']);
 
         return  $post;
+
+    }
+
+    public function modify($id, $title, $content): void {
+
+        $statement = $this->database->getDatabase()->prepare("UPDATE posts SET title = ?, content = ? WHERE id = ?");
+        $statement->execute([$title, $content, $id]);
+
+    }
+
+    public function delete($id): void {
+
+        $statement = $this->database->getDatabase()->prepare("DELETE FROM posts WHERE id = ?");
+        $statement->execute([$id]);
 
     }
 
